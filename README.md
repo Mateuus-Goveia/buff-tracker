@@ -16,6 +16,13 @@ This is an early beta. Back up `buffs.json` and `settings.json` before replacing
 - Choose from 22 reminder sounds.
 - Support the project through PayPal or Pix from inside the app.
 
+## Support the project
+
+If Buff Tracker is useful to you, you can support its development:
+
+[![Donate with PayPal](https://img.shields.io/badge/Donate-PayPal-00457C?logo=paypal&logoColor=white)](https://www.paypal.com/donate/?hosted_button_id=3MHRZ5NYLQZRS)
+[![Donate with Pix](https://img.shields.io/badge/Donate-Pix-32BCAD?logo=pix&logoColor=white)](https://nubank.com.br/cobrar/gfgdg/6ae9fc91-b114-4cb5-90af-09fc73cbed4e)
+
 ## Privacy
 
 The app does not send usage data or keyboard input over the network. In keyboard mode, it uses a global keyboard listener while open to detect assigned keys; it does not block key presses or save general keystrokes. The listener stops when the app closes. The app opens donation sites only when the user chooses a donation method. Update checks contact GitHub only when the user clicks **Check for updates**; GitHub can see the request's IP address and app version from its User-Agent. The app sends no device ID or personal profile. Buff presets and preferences are stored locally in `buffs.json` and `settings.json`; do not share those files if they contain personal configuration.
@@ -63,3 +70,4 @@ The script creates `dist/Controle de Buffs/` and `dist/Controle-de-Buffs-Windows
 The application code and project data are released under the MIT License in `LICENSE`. Asset origins and their separate terms are listed in [`ASSET_CREDITS.md`](ASSET_CREDITS.md). The bundled Press Start 2P font is distributed under the SIL Open Font License 1.1; its license is included alongside the font.
 
 This project is not affiliated with, endorsed by, or associated with Nexon.
+
