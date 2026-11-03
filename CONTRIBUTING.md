@@ -12,7 +12,7 @@ Thanks for helping improve Buff Tracker. This guide keeps changes easy to review
 
 ## Development setup
 
-Use Python 3.12 or 3.13 on Windows for development and packaging.
+Use Python 3.12, 3.13, or 3.14 on Windows for development and packaging.
 
 ```powershell
 python -m venv venv
