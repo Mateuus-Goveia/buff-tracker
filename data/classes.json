@@ -1,0 +1,168 @@
+{
+  "Warrior": {
+    "1st job": {
+      "Iron Body": {
+        "max_level": 20,
+        "icon_default": "iron_body.png",
+        "durations": { "1": 30, "10": 150, "20": 300 }
+      }
+    },
+    "2nd job - fighter": {
+      "Sword Booster": {
+        "max_level": 20,
+        "icon_default": "sword_booster.png",
+        "durations": { "1": 10, "10": 100, "20": 200 }
+      },
+      "Axe Booster": {
+        "max_level": 20,
+        "icon_default": "axe_booster.png",
+        "durations": { "1": 10, "10": 100, "20": 200 }
+      },
+      "Rage": {
+        "max_level": 30,
+        "icon_default": "rage.png",
+        "durations": { "1": 30, "15": 180, "30": 360 }
+      }
+    },
+    "2nd job - Page": {
+      "Sword Booster": {
+        "max_level": 20,
+        "icon_default": "sword_booster.png",
+        "durations": { "1": 10, "10": 100, "20": 200 }
+      },
+      "Blunt Weapon Booster": {
+        "max_level": 20,
+        "icon_default": "blunt_weapon_booster.png",
+        "durations": { "1": 10, "10": 100, "20": 200 }
+      }
+    },
+    "2nd job - Spearman": {
+      "Spear Booster": {
+        "max_level": 20,
+        "icon_default": "spear_booster.png",
+        "durations": { "1": 10, "10": 100, "20": 200 }
+      },
+      "Polearm Booster": {
+        "max_level": 20,
+        "icon_default": "polearm_booster.png",
+        "durations": { "1": 10, "10": 100, "20": 200 }
+      },
+      "Iron Will": {
+        "max_level": 20,
+        "icon_default": "iron_will.png",
+        "durations": { "1": 30, "10": 150, "20": 300 }
+      }
+    }
+  },
+  "Magician": {
+    "1st job": {
+      "Magic Guard": {
+        "max_level": 20,
+        "icon_default": "magic_guard.png",
+        "durations": { "1": 60, "10": 300, "20": 600 }
+      },
+      "Magic Armor": {
+        "max_level": 20,
+        "icon_default": "magic_armor.png",
+        "durations": { "1": 30, "10": 150, "20": 300 }
+      }
+    },
+    "2nd job - F/P Wizard": {
+      "Meditation": {
+        "max_level": 20,
+        "icon_default": "meditation.png",
+        "durations": { "1": 20, "10": 120, "20": 240 }
+      }
+    },
+    "2nd job - I/L Wizard": {
+      "Meditation": {
+        "max_level": 20,
+        "icon_default": "meditation.png",
+        "durations": { "1": 20, "10": 120, "20": 240 }
+      }
+    },
+    "2nd job - Cleric": {
+      "Invincible": {
+        "max_level": 20,
+        "icon_default": "invincible.png",
+        "durations": {
+          "1": 100, "2": 110, "3": 120, "4": 130, "5": 140,
+          "6": 150, "7": 160, "8": 170, "9": 180, "10": 190,
+          "11": 200, "12": 210, "13": 220, "14": 230, "15": 240,
+          "16": 250, "17": 260, "18": 270, "19": 280, "20": 300
+        }
+      },
+      "Bless": {
+        "max_level": 20,
+        "icon_default": "bless.png",
+        "durations": { "1": 30, "10": 150, "20": 300 }
+      }
+    }
+  },
+  "Bowman": {
+    "1st job": {
+      "Focus": {
+        "max_level": 20,
+        "icon_default": "focus.png",
+        "durations": { "1": 30, "10": 150, "20": 300 }
+      }
+    },
+    "2nd job - Hunter": {
+      "Bow Booster": {
+        "max_level": 20,
+        "icon_default": "bow_booster.png",
+        "durations": { "1": 10, "10": 100, "20": 200 }
+      },
+      "Soul Arrow": {
+        "max_level": 20,
+        "icon_default": "soul_arrow.png",
+        "durations": { "1": 60, "10": 300, "20": 600 }
+      }
+    },
+    "2nd job - Crossbowman": {
+      "Crossbow Booster": {
+        "max_level": 20,
+        "icon_default": "claw_booster.png",
+        "durations": { "1": 10, "10": 100, "20": 200 }
+      },
+      "Soul Arrow: Crossbow": {
+        "max_level": 20,
+        "icon_default": "soul_arrow.png",
+        "durations": { "1": 60, "10": 300, "20": 600 }
+      }
+    }
+  },
+  "Thief": {
+    "1st job": {
+      "Dark Sight": {
+        "max_level": 20,
+        "icon_default": "dark_sight.png",
+        "durations": { "1": 10, "10": 100, "20": 200 }
+      }
+    },
+    "2nd job - Assassin": {
+      "Claw Booster": {
+        "max_level": 20,
+        "icon_default": "claw_booster.png",
+        "durations": { "1": 10, "10": 100, "20": 200 }
+      },
+      "Haste": {
+        "max_level": 20,
+        "icon_default": "haste.png",
+        "durations": { "1": 10, "10": 100, "20": 200 }
+      }
+    },
+    "2nd job - Bandit": {
+      "Dagger Booster": {
+        "max_level": 20,
+        "icon_default": "dagger_booster.png",
+        "durations": { "1": 10, "10": 100, "20": 200 }
+      },
+      "Haste": {
+        "max_level": 20,
+        "icon_default": "haste.png",
+        "durations": { "1": 10, "10": 100, "20": 200 }
+      }
+    }
+  }
+}

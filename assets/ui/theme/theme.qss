@@ -1,0 +1,186 @@
+/*
+ * Tema do Controle de Buffs (Qt / QSS).
+ * @UI@ = pasta deste tema, @FONT@ = família da fonte, @FS@/@FS_SM@/@FS_LG@/@FS_XL@ = tamanhos (px).
+ *
+ * SLICES (largura da borda 9-slice de cada sprite, em px):
+ *   panel, icon_frame, button*, danger*, tab*  -> 6
+ *   content, card                               -> 8
+ *   inset, combo*, scroll_handle                -> 4
+ * Ao trocar um sprite por um seu, mantenha o nome e ajuste o número do border-image
+ * e o border-width correspondente se a borda for diferente.
+ */
+
+* {
+    font-family: "@FONT@";
+    font-size: @FS@px;
+    color: #f4efe0;
+}
+
+QMainWindow, QWidget#root {
+    background-color: #1c1d23;
+}
+
+QLabel { background: transparent; }
+QDialog#donationDialog {
+    background-color: #1c1d23;
+    color: #f4efe0;
+}
+QLabel#donationPrompt { color: #f4efe0; }
+
+/* ---------- Cabeçalho ---------- */
+QFrame#header {
+    border-image: url("@UI@/panel.png") 6 6 6 6 stretch stretch;
+    border-width: 6px;
+}
+QLabel#appTitle {
+    font-size: @FS_XL@px;
+    color: #f0cf7a;
+}
+QLabel#iconFrame {
+    border-image: url("@UI@/icon_frame.png") 6 6 6 6 stretch stretch;
+    border-width: 6px;
+}
+
+/* ---------- Abas (botões marcáveis) ---------- */
+QPushButton#tab {
+    border-image: url("@UI@/tab.png") 6 6 6 6 stretch stretch;
+    border-width: 6px;
+    min-height: 22px;
+    padding: 0 8px;
+    color: #9aa1b4;
+    font-size: @FS_LG@px;
+}
+QPushButton#tab:hover {
+    border-image: url("@UI@/tab_hover.png") 6 6 6 6 stretch stretch;
+    color: #f4efe0;
+}
+QPushButton#tab:pressed {
+    border-image: url("@UI@/tab_hover.png") 6 6 6 6 stretch stretch;
+}
+QPushButton#tab:checked,
+QPushButton#tab:checked:hover,
+QPushButton#tab:checked:pressed {
+    border-image: url("@UI@/tab_active.png") 6 6 6 6 stretch stretch;
+    color: #ffffff;
+}
+
+/* ---------- Painéis ---------- */
+QFrame#content {
+    border-image: url("@UI@/content.png") 8 8 8 8 stretch stretch;
+    border-width: 8px;
+}
+QFrame#inset {
+    border-image: url("@UI@/inset.png") 4 4 4 4 stretch stretch;
+    border-width: 4px;
+}
+QFrame#card {
+    border-image: url("@UI@/card.png") 8 8 8 8 stretch stretch;
+    border-width: 8px;
+}
+
+QLabel#sectionTitle {
+    font-size: @FS_LG@px;
+    color: #f0cf7a;
+}
+QLabel#fieldLabel { color: #f4efe0; }
+QLabel#cardName { font-size: @FS_LG@px; color: #f0cf7a; }
+QLabel#hint { color: #9aa1b4; }
+QLabel#error { color: #ff6b6b; }
+QLabel#badge {
+    border-image: url("@UI@/inset.png") 4 4 4 4 stretch stretch;
+    border-width: 4px;
+    padding: 0 4px;
+    color: #f0cf7a;
+}
+
+/* estados do contador */
+QLabel#timer { font-size: @FS@px; }
+QLabel#timer[state="ready"]   { color: #9aa1b4; }
+QLabel#timer[state="ok"]      { color: #4ade80; }
+QLabel#timer[state="warn"]    { color: #facc15; }
+QLabel#timer[state="expired"] { color: #ff6b6b; }
+
+/* ---------- Botões ---------- */
+QPushButton {
+    border-image: url("@UI@/button.png") 6 6 6 6 stretch stretch;
+    border-width: 6px;
+    min-height: 26px;
+    padding: 0 10px;
+    color: #ffffff;
+}
+QPushButton:hover    { border-image: url("@UI@/button_hover.png") 6 6 6 6 stretch stretch; }
+QPushButton:pressed  { border-image: url("@UI@/button_pressed.png") 6 6 6 6 stretch stretch; }
+QPushButton:disabled { border-image: url("@UI@/button_disabled.png") 6 6 6 6 stretch stretch; color: #7d8394; }
+QPushButton:focus    { outline: none; }
+
+QPushButton#small { min-height: 18px; padding: 0 6px; font-size: @FS_SM@px; }
+
+QPushButton#danger        { border-image: url("@UI@/danger.png") 6 6 6 6 stretch stretch; min-width: 18px; }
+QPushButton#danger:hover  { border-image: url("@UI@/danger_hover.png") 6 6 6 6 stretch stretch; }
+QPushButton#danger:pressed{ border-image: url("@UI@/danger_pressed.png") 6 6 6 6 stretch stretch; }
+
+QPushButton#donate {
+    border-image: none;
+    border: none;
+    border-top: 2px solid #7a5a1e;
+    background-color: #0e0d0a;
+    color: #d9a93a;
+    min-height: 34px;
+}
+QPushButton#donate:hover { color: #f0cf7a; background-color: #1a1710; }
+
+/* ---------- Combos ---------- */
+QComboBox {
+    border-image: url("@UI@/combo.png") 4 4 4 4 stretch stretch;
+    border-width: 4px;
+    min-height: 24px;
+    padding: 0 0 0 6px;   /* a área da seta (drop-down) já é descontada pelo Qt */
+    color: #ffffff;
+}
+QComboBox:hover { border-image: url("@UI@/combo_hover.png") 4 4 4 4 stretch stretch; }
+QComboBox::drop-down {
+    border: none;
+    width: 26px;
+    subcontrol-origin: padding;
+    subcontrol-position: center right;
+}
+QComboBox::down-arrow {
+    image: url("@UI@/arrow_down.png");
+    width: 14px;
+    height: 8px;
+}
+QComboBox QAbstractItemView {
+    background-color: #1a1c23;
+    border: 2px solid #d9a93a;
+    selection-background-color: #2f5ea8;
+    selection-color: #ffffff;
+    outline: 0;
+    padding: 2px;
+}
+QComboBox QAbstractItemView::item { min-height: 28px; padding-left: 4px; }
+QComboBox QAbstractItemView::item:hover,
+QComboBox QAbstractItemView::item:selected {
+    background-color: #2f5ea8;
+    color: #ffffff;
+}
+
+/* ---------- Checkbox ---------- */
+QCheckBox { spacing: 10px; background: transparent; }
+QCheckBox::indicator { width: 20px; height: 20px; image: url("@UI@/check_off.png"); }
+QCheckBox::indicator:checked { image: url("@UI@/check_on.png"); }
+
+/* ---------- Rolagem ---------- */
+QScrollArea { background: transparent; border: none; }
+QScrollBar:vertical {
+    background: #0e0d0a;
+    width: 14px;
+    margin: 0;
+    border: 1px solid #0e0d0a;
+}
+QScrollBar::handle:vertical {
+    border-image: url("@UI@/scroll_handle.png") 4 4 4 4 stretch stretch;
+    border-width: 4px;
+    min-height: 32px;
+}
+QScrollBar::add-line:vertical, QScrollBar::sub-line:vertical { height: 0; width: 0; border: none; background: none; }
+QScrollBar::add-page:vertical, QScrollBar::sub-page:vertical { background: none; }

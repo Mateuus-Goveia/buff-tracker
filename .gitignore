@@ -1,0 +1,17 @@
+# PyInstaller & Build Outputs
+build/
+dist/
+*.spec
+!main_desktop.spec
+
+# Python Cache
+__pycache__/
+*.pyc
+.pytest_cache/
+.tmp-pip/
+venv/
+.venv/
+
+# Dados Locais do Usuário
+buffs.json
+settings.json

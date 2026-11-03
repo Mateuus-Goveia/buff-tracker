@@ -1,0 +1,16 @@
+{
+  "Active Consumables": {
+    "Attack Potion": {
+      "duration": 600,
+      "icon_default": "potion_atk.png"
+    },
+    "Accuracy Potion": {
+      "duration": 600,
+      "icon_default": "potion_acc.png"
+    },
+    "Speed Potion": {
+      "duration": 300,
+      "icon_default": "potion_spd.png"
+    }
+  }
+}
