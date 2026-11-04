@@ -10,7 +10,19 @@ a = Analysis(
     hookspath=[],
     hooksconfig={},
     runtime_hooks=[],
-    excludes=[],
+    # The app uses QtCore, QtGui, QtNetwork, and QtWidgets. Omit large optional
+    # Qt modules that are not imported by the desktop UI.
+    excludes=[
+        'PySide6.QtPdf',
+        'PySide6.QtPdfWidgets',
+        'PySide6.QtQml',
+        'PySide6.QtQuick',
+        'PySide6.QtQuick3D',
+        'PySide6.QtQuickControls2',
+        'PySide6.QtQuickTest',
+        'PySide6.QtQuickWidgets',
+        'PySide6.QtVirtualKeyboard',
+    ],
     noarchive=False,
     optimize=0,
 )
