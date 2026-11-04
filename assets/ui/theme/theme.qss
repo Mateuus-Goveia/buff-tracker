@@ -27,6 +27,10 @@ QDialog#donationDialog {
 }
 QLabel#donationPrompt { color: #f4efe0; }
 
+/* Message boxes (e.g. update check): dark background so the light text is readable */
+QMessageBox { background-color: #1c1d23; }
+QMessageBox QLabel { color: #f4efe0; background: transparent; }
+
 /* ---------- Cabeçalho ---------- */
 QFrame#header {
     border-image: url("@UI@/panel.png") 6 6 6 6 stretch stretch;
