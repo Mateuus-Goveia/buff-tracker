@@ -4,7 +4,7 @@ import re
 from packaging.version import InvalidVersion, Version
 
 
-APP_VERSION = "0.1.0-beta.2"
+APP_VERSION = "0.1.0-beta.3"
 # Public repository for release checks and the project's first beta.
 GITHUB_REPOSITORY = "Mateuus-Goveia/buff-tracker"
 REQUEST_TIMEOUT_MS = 5000

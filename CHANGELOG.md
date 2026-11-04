@@ -2,6 +2,19 @@
 
 Notable changes to Buff Tracker are recorded here.
 
+## [0.1.0-beta.3] - 2026-11-04
+
+### Fixed
+- Overlay no longer starts in the bottom-right corner on first run; it now appears at the top center of the screen.
+- A saved overlay position that is off-screen (for example after changing monitors) is ignored.
+- Update dialogs are readable with the dark theme.
+
+### Changed
+- Optimized icon and keyboard assets to reduce the package size.
+
+### Docs
+- Added screenshots and a demo GIF to the README, plus a Portuguese README.
+
 ## [0.1.0-beta.2] - 2026-11-04
 
 Second public beta, adding an optional in-game companion overlay and improving buff setup and contact information.
