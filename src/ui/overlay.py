@@ -142,7 +142,8 @@ class BuffOverlay(QWidget):
             screen = QGuiApplication.primaryScreen()
         if screen is not None:
             area = screen.availableGeometry()
-            self.move(area.right() - self.width() - 24, area.bottom() - self.height() - 70)
+            # Top-center of the screen: visible and out of the way on first run.
+            self.move(area.left() + (area.width() - self.width()) // 2, area.top() + 12)
         self.setProperty("positionRestored", True)
 
     def eventFilter(self, watched, event):

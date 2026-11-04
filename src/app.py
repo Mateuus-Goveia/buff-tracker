@@ -121,7 +121,7 @@ class AppBuffTracker:
         self.overlay.set_click_through(get_setting("overlay_click_through", True))
         self.overlay.set_buffs(self.user_buffs)
         overlay_x, overlay_y = get_setting("overlay_x"), get_setting("overlay_y")
-        if isinstance(overlay_x, int) and isinstance(overlay_y, int):
+        if isinstance(overlay_x, int) and isinstance(overlay_y, int) and self._position_is_visible(overlay_x, overlay_y):
             self.overlay.move(overlay_x, overlay_y)
         self.overlay_enabled = bool(get_setting("overlay_enabled", False))
         self.overlay.set_enabled(self.overlay_enabled)
@@ -166,6 +166,13 @@ class AppBuffTracker:
         enabled = bool(enabled)
         set_setting("overlay_click_through", enabled)
         self.overlay.set_click_through(enabled)
+
+    def _position_is_visible(self, x, y):
+        """True if the saved overlay position still falls on a connected screen."""
+        from PySide6.QtCore import QRect
+        from PySide6.QtGui import QGuiApplication
+        rect = QRect(x, y, max(1, self.overlay.width()), max(1, self.overlay.height()))
+        return any(screen.availableGeometry().intersects(rect) for screen in QGuiApplication.screens())
 
     @staticmethod
     def save_overlay_position(x, y):
