@@ -1,4 +1,7 @@
 {
     "language": "pt",
-    "input_mode": "joystick"
+    "input_mode": "joystick",
+    "overlay_enabled": false,
+    "overlay_opacity": 80,
+    "overlay_click_through": true
 }

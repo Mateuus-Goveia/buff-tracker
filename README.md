@@ -14,7 +14,12 @@ This is an early beta. Back up `buffs.json` and `settings.json` before replacing
 - Choose joystick/controller or keyboard shortcuts. In keyboard mode, assign each key to at most one buff. Ctrl, Alt, and Shift are treated as individual keys, not as modifiers.
 - Use the interface in English or Portuguese.
 - Choose from 22 reminder sounds.
+- Show an optional translucent, always-on-top overlay with buff icons and countdowns.
 - Support the project through PayPal or Pix from inside the app.
+
+## Contact and maintainer
+
+Buff Tracker is created by [Matheus Ferreira Goveia](https://github.com/Mateuus-Goveia). For suggestions or basic project support, email [bufftracker.contato@gmail.com](mailto:bufftracker.contato@gmail.com). You can also find Matheus on [GitHub](https://github.com/Mateuus-Goveia) and [LinkedIn](https://www.linkedin.com/in/matheus-goveia/).
 
 ## Support the project
 
@@ -26,6 +31,8 @@ If Buff Tracker is useful to you, you can support its development:
 ## Privacy
 
 The app does not send usage data or keyboard input over the network. In keyboard mode, it uses a global keyboard listener while open to detect assigned keys; it does not block key presses or save general keystrokes. The listener stops when the app closes. The app opens donation sites only when the user chooses a donation method. Update checks contact GitHub only when the user clicks **Check for updates**; GitHub can see the request's IP address and app version from its User-Agent. The app sends no device ID or personal profile. Buff presets and preferences are stored locally in `buffs.json` and `settings.json`; do not share those files if they contain personal configuration.
+
+The optional overlay is a normal transparent Windows window; it does not inject code into MapleStory or read game memory. Use the opacity slider in Settings to adjust its visibility. Click-through is enabled by default so the overlay does not intercept game clicks; turn it off temporarily to drag the overlay to another position. A standard window overlay may not appear over exclusive full-screen games, so use windowed or borderless mode if needed.
 
 ## Updates
 

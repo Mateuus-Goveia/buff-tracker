@@ -7,10 +7,10 @@ from PySide6.QtGui import QIcon, QPixmap
 from PySide6.QtNetwork import QNetworkAccessManager, QNetworkReply, QNetworkRequest
 from PySide6.QtWidgets import (
     QButtonGroup, QCheckBox, QComboBox, QDialog, QDialogButtonBox, QFrame, QGridLayout, QHBoxLayout, QLabel, QListView,
-    QMainWindow, QMessageBox, QPushButton, QScrollArea, QSizePolicy, QStackedWidget, QVBoxLayout, QWidget,
+    QMainWindow, QMessageBox, QPushButton, QScrollArea, QSizePolicy, QSlider, QStackedWidget, QVBoxLayout, QWidget,
 )
 
-from src.i18n import current_language, tr
+from src.i18n import current_language, get_setting, tr
 from src.options import NONE, input_label, modifier_items
 from src.utils import ICONS_DIR, KEYBOARD_DIR, keyboard_asset_name
 from src.ui.theme import theme_asset
@@ -22,6 +22,9 @@ from src.update_checker import (
 
 DONATE_URL = "https://www.paypal.com/donate/?hosted_button_id=3MHRZ5NYLQZRS"
 PIX_URL = "https://nubank.com.br/cobrar/gfgdg/6ae9fc91-b114-4cb5-90af-09fc73cbed4e"
+PROJECT_EMAIL = "bufftracker.contato@gmail.com"
+AUTHOR_GITHUB_URL = "https://github.com/Mateuus-Goveia"
+AUTHOR_LINKEDIN_URL = "https://www.linkedin.com/in/matheus-goveia/"
 
 KEY_ROWS = [
     [(f"f{i}", i - 1) for i in range(1, 13)],
@@ -351,29 +354,69 @@ class MainWindow(QMainWindow):
         self.btn_mode_joystick.setCheckable(True)
         self.btn_mode_joystick.setCursor(Qt.CursorShape.PointingHandCursor)
         self._reg(self.btn_mode_joystick, lambda: tr("mode.joystick"))
+        joystick_icon = QLabel("🎮")
+        joystick_icon.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        joystick_icon.setFixedWidth(24)
         self.btn_mode_keyboard = QPushButton()
         self.btn_mode_keyboard.setObjectName("small")
         self.btn_mode_keyboard.setCheckable(True)
         self.btn_mode_keyboard.setCursor(Qt.CursorShape.PointingHandCursor)
         self._reg(self.btn_mode_keyboard, lambda: tr("mode.keyboard"))
+        keyboard_icon = QLabel("⌨️")
+        keyboard_icon.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        keyboard_icon.setFixedWidth(24)
         self.mode_button_group = QButtonGroup(self)
         self.mode_button_group.setExclusive(True)
         self.mode_button_group.addButton(self.btn_mode_joystick)
         self.mode_button_group.addButton(self.btn_mode_keyboard)
         mode_buttons = QHBoxLayout()
-        mode_buttons.setSpacing(6)
-        mode_buttons.addWidget(self.btn_mode_joystick)
-        mode_buttons.addWidget(self.btn_mode_keyboard)
+        mode_buttons.setSpacing(10)
+        joystick_option = QHBoxLayout()
+        joystick_option.setSpacing(4)
+        joystick_option.addWidget(joystick_icon)
+        joystick_option.addWidget(self.btn_mode_joystick, 1)
+        keyboard_option = QHBoxLayout()
+        keyboard_option.setSpacing(4)
+        keyboard_option.addWidget(keyboard_icon)
+        keyboard_option.addWidget(self.btn_mode_keyboard, 1)
+        mode_buttons.addLayout(joystick_option, 1)
+        mode_buttons.addLayout(keyboard_option, 1)
         preferences_grid.addWidget(self._label("settings.input_mode"), 0, 0)
         preferences_grid.addLayout(mode_buttons, 0, 1)
         preferences_grid.addWidget(self._label("settings.language"), 1, 0)
         preferences_grid.addWidget(self.combo_language, 1, 1)
-        self.btn_check_updates = QPushButton()
-        self.btn_check_updates.setObjectName("small")
-        self.btn_check_updates.setCursor(Qt.CursorShape.PointingHandCursor)
-        self.btn_check_updates.clicked.connect(self.check_for_updates)
-        self._reg(self.btn_check_updates, lambda: tr("update.check"))
-        preferences_grid.addWidget(self.btn_check_updates, 2, 0, 1, 2)
+
+        self.chk_overlay = QCheckBox()
+        self._reg(self.chk_overlay, lambda: tr("overlay.enabled"))
+        self.chk_overlay.setChecked(bool(get_setting("overlay_enabled", False)))
+        preferences_grid.addWidget(self.chk_overlay, 2, 0, 1, 2)
+
+        opacity_row = QHBoxLayout()
+        self.slider_overlay_opacity = QSlider(Qt.Orientation.Horizontal)
+        self.slider_overlay_opacity.setRange(30, 100)
+        try:
+            saved_opacity = int(get_setting("overlay_opacity", 80))
+        except (TypeError, ValueError):
+            saved_opacity = 80
+        self.slider_overlay_opacity.setValue(max(30, min(100, saved_opacity)))
+        self.lbl_overlay_opacity = QLabel()
+        self.lbl_overlay_opacity.setAlignment(Qt.AlignmentFlag.AlignRight | Qt.AlignmentFlag.AlignVCenter)
+        self._reg(self.lbl_overlay_opacity, lambda: tr("overlay.opacity", percent=self.slider_overlay_opacity.value()))
+        self.slider_overlay_opacity.valueChanged.connect(
+            lambda _value: self.lbl_overlay_opacity.setText(
+                tr("overlay.opacity", percent=self.slider_overlay_opacity.value())
+            )
+        )
+        opacity_row.addWidget(self.slider_overlay_opacity, 1)
+        opacity_row.addWidget(self.lbl_overlay_opacity)
+        preferences_grid.addWidget(self._label("overlay.opacity_label"), 3, 0, 1, 2)
+        preferences_grid.addLayout(opacity_row, 4, 0, 1, 2)
+
+        self.chk_overlay_click_through = QCheckBox()
+        self._reg(self.chk_overlay_click_through, lambda: tr("overlay.click_through"))
+        self.chk_overlay_click_through.setChecked(bool(get_setting("overlay_click_through", True)))
+        preferences_grid.addWidget(self.chk_overlay_click_through, 5, 0, 1, 2)
+
         col.addWidget(preferences)
 
         col.addWidget(self._label("settings.title", "sectionTitle", wrap=True, shadow=True))
@@ -468,6 +511,43 @@ class MainWindow(QMainWindow):
         btn_save.clicked.connect(self.controller.save_all_configurations)
         self._reg(btn_save, lambda: tr("btn.save"))
         col.addWidget(btn_save)
+
+        self.btn_check_updates = QPushButton()
+        self.btn_check_updates.setObjectName("small")
+        self.btn_check_updates.setCursor(Qt.CursorShape.PointingHandCursor)
+        self.btn_check_updates.clicked.connect(self.check_for_updates)
+        self._reg(self.btn_check_updates, lambda: tr("update.check"))
+        col.addWidget(self.btn_check_updates)
+
+        col.addWidget(self._label("about.title", "sectionTitle", wrap=True, shadow=True))
+        about = QFrame()
+        about.setObjectName("inset")
+        about_layout = QVBoxLayout(about)
+        about_layout.setContentsMargins(10, 8, 10, 8)
+        about_layout.setSpacing(6)
+        self.lbl_author_credit = QLabel()
+        self.lbl_author_credit.setWordWrap(True)
+        self._reg(self.lbl_author_credit, lambda: tr("about.author"))
+        about_layout.addWidget(self.lbl_author_credit)
+        self.lbl_app_version = QLabel()
+        self._reg(self.lbl_app_version, lambda: f"{tr('about.version')}: {APP_VERSION}")
+        about_layout.addWidget(self.lbl_app_version)
+
+        contact_links = QHBoxLayout()
+        contact_links.setSpacing(6)
+        for key, url in (
+            ("about.github", AUTHOR_GITHUB_URL),
+            ("about.linkedin", AUTHOR_LINKEDIN_URL),
+            ("about.email", f"mailto:{PROJECT_EMAIL}"),
+        ):
+            link_button = QPushButton()
+            link_button.setObjectName("small")
+            link_button.setCursor(Qt.CursorShape.PointingHandCursor)
+            self._reg(link_button, lambda k=key: tr(k))
+            link_button.clicked.connect(lambda _checked=False, target=url: webbrowser.open(target))
+            contact_links.addWidget(link_button)
+        about_layout.addLayout(contact_links)
+        col.addWidget(about)
         col.addStretch()
 
         # Use signals for user actions only (activated), like CustomTkinter's "command".
@@ -477,10 +557,13 @@ class MainWindow(QMainWindow):
         self.combo_skill.activated.connect(lambda _i: self.controller.update_levels(self.combo_skill.currentData()))
         self.combo_mod.activated.connect(lambda _i: self.controller.refresh_input_options())
         self.combo_input.activated.connect(lambda _i: self.controller.update_previews())
-        self.combo_sound.textActivated.connect(self.controller.play_sound)  # Preview the selected sound.
+        self.combo_sound.activated.connect(lambda _i: self.controller.play_sound(self.combo_sound.currentData()))
         self.btn_mode_joystick.clicked.connect(lambda: self.controller.change_input_mode("joystick"))
         self.btn_mode_keyboard.clicked.connect(lambda: self.controller.change_input_mode("keyboard"))
         self.combo_language.activated.connect(lambda _i: self.controller.change_language(self.combo_language.currentData()))
+        self.chk_overlay.toggled.connect(self.controller.set_overlay_enabled)
+        self.slider_overlay_opacity.valueChanged.connect(self.controller.set_overlay_opacity)
+        self.chk_overlay_click_through.toggled.connect(self.controller.set_overlay_click_through)
 
         return self._content_frame(scroll)
 

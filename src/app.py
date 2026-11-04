@@ -20,10 +20,45 @@ from src.models import BuffItem
 from src.joystick import start_joystick_listener
 from src.keyboard_listener import start_keyboard_listener
 from src.ui.main_window import KeyboardPickerDialog, MainWindow, load_pixmap
+from src.ui.overlay import BuffOverlay
 from src.ui.theme import build_stylesheet, load_pixel_font, theme_asset
 from src.ui.widgets import BuffCard
 
-LEGACY_SOUND_ALIASES = {"bell1": "alert_01", "bell2": "alert_02", "hey": "alert_03"}
+SOUND_NAMES = {
+    "arcane_chime": "Arcane Chime",
+    "crystal_bell": "Crystal Bell",
+    "mystic_pulse": "Mystic Pulse",
+    "pixel_pop": "Pixel Pop",
+    "star_chime": "Star Chime",
+    "dream_bell": "Dream Bell",
+    "spark_ping": "Spark Ping",
+    "moonlight_tone": "Moonlight Tone",
+    "echo_charm": "Echo Charm",
+    "mana_note": "Mana Note",
+    "frost_chime": "Frost Chime",
+    "ember_tone": "Ember Tone",
+    "fairy_bell": "Fairy Bell",
+    "rune_pulse": "Rune Pulse",
+    "aurora_ping": "Aurora Ping",
+    "comet_chime": "Comet Chime",
+    "golden_note": "Golden Note",
+    "wind_bell": "Wind Bell",
+    "mystic_echo": "Mystic Echo",
+    "twilight_tone": "Twilight Tone",
+    "nova_spark": "Nova Spark",
+    "whimsy_bell": "Whimsy Bell",
+}
+SOUND_FILE_MIGRATIONS = {
+    f"alert_{index:02d}": sound_id
+    for index, sound_id in enumerate(SOUND_NAMES, start=1)
+}
+LEGACY_SOUND_ALIASES = {
+    "bell1": "arcane_chime",
+    "bell2": "crystal_bell",
+    "hey": "mystic_pulse",
+    **SOUND_FILE_MIGRATIONS,
+}
+UNTIMED_SKILLS = {"Magic Guard", "Dark Sight"}
 
 
 def branch_label(job_key):
@@ -76,6 +111,20 @@ class AppBuffTracker:
         self.load_user_buffs()
 
         self.window = MainWindow(self)
+        self.overlay = BuffOverlay()
+        self.overlay.position_changed.connect(self.save_overlay_position)
+        try:
+            overlay_opacity = int(get_setting("overlay_opacity", 80))
+        except (TypeError, ValueError):
+            overlay_opacity = 80
+        self.overlay.set_opacity(overlay_opacity)
+        self.overlay.set_click_through(get_setting("overlay_click_through", True))
+        self.overlay.set_buffs(self.user_buffs)
+        overlay_x, overlay_y = get_setting("overlay_x"), get_setting("overlay_y")
+        if isinstance(overlay_x, int) and isinstance(overlay_y, int):
+            self.overlay.move(overlay_x, overlay_y)
+        self.overlay_enabled = bool(get_setting("overlay_enabled", False))
+        self.overlay.set_enabled(self.overlay_enabled)
         self.sync_consumable_checkboxes()
 
         class_names = list(self.classes_data.keys()) if self.classes_data else ["Warrior"]
@@ -99,7 +148,29 @@ class AppBuffTracker:
 
     def run(self):
         self.window.show()
+        if self.overlay_enabled:
+            self.overlay.show()
         return self.qapp.exec()
+
+    def set_overlay_enabled(self, enabled):
+        self.overlay_enabled = bool(enabled)
+        set_setting("overlay_enabled", self.overlay_enabled)
+        self.overlay.set_enabled(self.overlay_enabled)
+
+    def set_overlay_opacity(self, percent):
+        percent = max(30, min(100, int(percent)))
+        set_setting("overlay_opacity", percent)
+        self.overlay.set_opacity(percent)
+
+    def set_overlay_click_through(self, enabled):
+        enabled = bool(enabled)
+        set_setting("overlay_click_through", enabled)
+        self.overlay.set_click_through(enabled)
+
+    @staticmethod
+    def save_overlay_position(x, y):
+        set_setting("overlay_x", int(x))
+        set_setting("overlay_y", int(y))
 
     def _stop_input_listeners(self):
         if self.joystick_proxy is not None:
@@ -160,20 +231,49 @@ class AppBuffTracker:
             with open(USER_BUFFS_PATH, "r", encoding="utf-8") as f:
                 data = json.load(f)
             for item in data:
+                saved_name = item.get("name", "Buff")
+                raw_skill_name = item.get("raw_skill_name")
+                skill_name = raw_skill_name or re.sub(r"\s+\(Lv\.\s*\d+\)$", "", saved_name)
+                if skill_name in UNTIMED_SKILLS:
+                    continue
+                saved_sound = item.get("sound_file", "bell1")
+                sound_file = LEGACY_SOUND_ALIASES.get(saved_sound, saved_sound)
+                duration = item.get("duration", 60)
+                level_match = re.search(r"\bLv\.\s*(\d+)\b", saved_name, re.IGNORECASE)
+                if raw_skill_name and level_match:
+                    catalog_durations = self._skill_durations(raw_skill_name)
+                    duration = catalog_durations.get(level_match.group(1), duration)
                 self.user_buffs.append(BuffItem(
                     item.get("id", str(uuid.uuid4())),
-                    item.get("name", "Buff"),
-                    item.get("duration", 60),
+                    saved_name,
+                    duration,
                     item.get("icon_file"),
-                    item.get("sound_file", "bell1"),
+                    sound_file,
                     normalize_id(item.get("input_key", NONE)),
                     normalize_id(item.get("modifier", NONE)),
                     item.get("is_consumable", False),
-                    item.get("raw_skill_name"),
+                    raw_skill_name,
                     item.get("keyboard_key", NONE),
                 ))
         except Exception:
             pass
+
+    def _skill_durations(self, skill_name):
+        """Return known durations when all catalog entries for a skill agree."""
+        matches = []
+        for jobs in self.classes_data.values():
+            for skills in jobs.values():
+                skill = skills.get(skill_name)
+                if skill:
+                    matches.append(skill.get("durations", {}))
+        if not matches:
+            return {}
+        levels = set.intersection(*(set(durations) for durations in matches))
+        return {
+            level: matches[0][level]
+            for level in levels
+            if all(durations[level] == matches[0][level] for durations in matches)
+        }
 
     def save_user_buffs(self):
         data = [buff.to_dict() for buff in self.user_buffs]
@@ -188,12 +288,20 @@ class AppBuffTracker:
 
     # ------------------------------------------------------------------ sounds
     def get_available_sounds(self):
+        def display_name(sound_id):
+            key = f"sound.{sound_id}"
+            translated = tr(key)
+            return translated if translated != key else SOUND_NAMES.get(sound_id, sound_id.replace("_", " ").title())
+
         if os.path.exists(SOUNDS_DIR):
             sounds = [os.path.splitext(name)[0] for name in os.listdir(SOUNDS_DIR)
                       if name.lower().endswith((".mp3", ".wav", ".ogg"))]
             if sounds:
-                return sorted(sounds, key=str.casefold)
-        return ["bell1", "bell2", "hey"]
+                return sorted(
+                    [(display_name(sound), sound) for sound in sounds],
+                    key=lambda item: item[0].casefold(),
+                )
+        return [(display_name(sound_id), sound_id) for sound_id in SOUND_NAMES]
 
     def play_sound(self, sound_name):
         if not sound_name:
@@ -250,6 +358,7 @@ class AppBuffTracker:
     def render_cards_ui(self):
         self.window.clear_cards()
         self.cards = {}
+        self.overlay.set_buffs(self.user_buffs)
 
         if not self.user_buffs:
             self.window.show_empty_message(tr("empty.cards"))
@@ -280,6 +389,7 @@ class AppBuffTracker:
         buff.remaining = buff.duration
         buff.is_active = True
         buff.sound_played_warning = False
+        self.overlay.refresh_timers()
 
     def remove_buff(self, buff):
         if buff in self.user_buffs:
@@ -309,6 +419,7 @@ class AppBuffTracker:
                 buff.is_active = False
                 if card:
                     card.set_timer(tr("card.expired"), "expired")
+        self.overlay.refresh_timers()
 
     # ------------------------------------------------------- configuration form
     def _branches(self, selected_class):
@@ -429,7 +540,10 @@ class AppBuffTracker:
         level_text = w.combo_level.currentText()
         lv_str = level_text.replace("Lv. ", "")
         durations = skill_data.get("durations", {})
-        duration = durations.get(lv_str, durations.get("1", 60))
+        duration = durations.get(lv_str)
+        if duration is None:
+            w.set_error(tr("err.duration_missing", skill=sel_skill, level=lv_str))
+            return
 
         existing = self._buff_for_skill(sel_skill)
         if existing is not None:
@@ -447,7 +561,7 @@ class AppBuffTracker:
                 f"{sel_skill} ({level_text})",
                 duration,
                 skill_data.get("icon_default"),
-                w.combo_sound.currentText(),
+                w.combo_sound.currentData(),
                 selected_input if self.input_mode == "joystick" else NONE,
                 (w.combo_mod.currentData() or NONE) if self.input_mode == "joystick" else NONE,
                 is_consumable=False,
@@ -474,7 +588,7 @@ class AppBuffTracker:
                 item_name,
                 details["duration"],
                 details.get("icon_default"),
-                "bell1",
+                "arcane_chime",
                 NONE,
                 NONE,
                 is_consumable=True,
